@@ -156,7 +156,7 @@
 		d3.csv('count.csv', function(data) {
 			var h = 900;
 			var w = 1600;
-			data = data.splice(0, 220);
+			data = data.splice(0, 260);
 
 			var random = d3.randomIrwinHall(2);
 			var getCount = function(d) {
@@ -221,7 +221,7 @@
 			var layout = d3.layout.cloud()
 				.size([w, h])
 				.words(words)
-				.padding(2)
+				.padding(1)
 				.rotate(function() {
 					return Math.round(1 - random()) * 90;
 				})
