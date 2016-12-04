@@ -32,6 +32,7 @@
 			left: 3px;
 			pointer-events: none;
 			padding:3px 12px 3px 3px;
+			background: rgba(255,255,255,0.7);
 		}
 
 
@@ -155,7 +156,7 @@
 		d3.csv('count.csv', function(data) {
 			var h = 900;
 			var w = 1600;
-			data = data.splice(0, 250);
+			data = data.splice(0, 220);
 
 			var random = d3.randomIrwinHall(2);
 			var getCount = function(d) {
