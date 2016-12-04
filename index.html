@@ -7,41 +7,44 @@
 	<title>Popular Keywords in Machine Learning and Control Theory</title>
 	<link href="https://fonts.googleapis.com/css?family=Raleway:100,200,300,400,500,600,700,800,900" rel="stylesheet">
 	<style>
-	html{
-			width:100%;
-			height:100%;
-	}
-	body {
+		html {
+			width: 100%;
+			height: 100%;
+		}
+
+		body {
 			margin: 0;
 			padding: 0;
 			width: 100%;
 			height: 100%;
 			position: relative;
-	}
-	svg {
-			width:100%;
-			height:100%;
-	}
+		}
+
+		svg {
+			width: 100%;
+			height: 100%;
+		}
+
 		#detail {
 			opacity: 0;
 			position: absolute;
-			bottom: 10px;
-			right: 10px;
-			width: 180px;
+			top: 3px;
+			left: 3px;
 			height: 130px;
-			background:rgba(255,255,255,0.8);
+			pointer-events: none;
 		}
+
 
 		div[id^="CDC"] {
 			border: solid 1px #3F51B5;
-			background: #3F51B5;
+			background: rgba(63, 81, 181, 0.33);
 			width: 0px;
 			height: 5px;
 		}
 
 		div[id^="ICML"] {
 			border: solid 1px #009688;
-			background: #009688;
+			background: rgba(0, 150, 136, 0.33);
 			width: 0px;
 			height: 5px;
 		}
@@ -51,13 +54,19 @@
 			font-size: 12px;
 			line-height: 1;
 			font-family: Raleway;
-			font-weight: 800;
+			font-weight: 500;
 		}
 
 		th {
 			text-align: right;
+			background: rgba(255, 255, 255, 0.8);
 		}
-
+		th.title{
+			text-align: left;
+			font-size: 12px;
+			font-weight: 600;
+			color:#37474F;
+		}
 		tr.CDC td,
 		tr.CDC th {
 			color: #3F51B5;
@@ -68,7 +77,7 @@
 		tr.ICML td,
 		tr.ICML th {
 			padding-top: 0;
-			padding-bottom: 5px;
+			padding-bottom: 0;
 			color: #009688;
 		}
 
@@ -81,17 +90,18 @@
 <body>
 	<div id="detail">
 		<table>
+			<thead>
+				<tr>
+					<th></th>
+					<th class="title">Freq. of &ldquo;<span id="word"></span>&rdquo;
+					</th>
+				</tr>
+			</thead>
 			<tbody>
 				<tr class="CDC">
 					<th>CDC 2013</th>
 					<td>
 						<div id="CDC2013"></div>
-					</td>
-				</tr>
-				<tr class="ICML">
-					<th>ICML 2013</th>
-					<td>
-						<div id="ICML2013"></div>
 					</td>
 				</tr>
 				<tr class="CDC">
@@ -100,28 +110,34 @@
 						<div id="CDC2014"></div>
 					</td>
 				</tr>
-				<tr class="ICML">
-					<th>ICML 2014</th>
-					<td>
-						<div id="ICML2014"></div>
-					</td>
-				</tr>
 				<tr class="CDC">
 					<th>CDC 2015</th>
 					<td>
 						<div id="CDC2015"></div>
 					</td>
 				</tr>
-				<tr class="ICML">
-					<th>ICML 2015</th>
-					<td>
-						<div id="ICML2015"></div>
-					</td>
-				</tr>
 				<tr class="CDC">
 					<th>CDC 2016</th>
 					<td>
 						<div id="CDC2016"></div>
+					</td>
+				</tr>
+				<tr class="ICML">
+					<th>ICML 2013</th>
+					<td>
+						<div id="ICML2013"></div>
+					</td>
+				</tr>
+				<tr class="ICML">
+					<th>ICML 2014</th>
+					<td>
+						<div id="ICML2014"></div>
+					</td>
+				</tr>
+				<tr class="ICML">
+					<th>ICML 2015</th>
+					<td>
+						<div id="ICML2015"></div>
 					</td>
 				</tr>
 				<tr class="ICML">
@@ -140,7 +156,7 @@
 		d3.csv('count.csv', function(data) {
 			var h = 900;
 			var w = 1600;
-			data = data.splice(0, 300);
+			data = data.splice(0, 500);
 
 			var random = d3.randomIrwinHall(2);
 			var getCount = function(d) {
@@ -157,7 +173,7 @@
 				return (ct - ml) / (ct + ml);
 			}
 			var countExt = d3.extent(data, getCount);
-			var sizeScale = d3.scalePow().exponent(1.2).domain(countExt).range([16, 64]);
+			var sizeScale = d3.scalePow().exponent(1.2).domain(countExt).range([12, 64]);
 			var weightScale = d3.scaleQuantize().domain([-1.5, 0.5]).range(["100", "200", "300", "400", "500", "600", "700", "800", "900"]);
 			var colors = ["#37474F", "#37474F"];
 			var scaleColor = d3.scalePow().exponent(1)
@@ -223,7 +239,7 @@
 				d3.select("body").append("svg")
 					.attr("id", "svg")
 					.attr("preserveAspectRatio", "xMidYMid slice")
-					.attr("viewBox", "0 0 "+layout.size()[0]+" "+layout.size()[1])
+					.attr("viewBox", "0 0 " + layout.size()[0] + " " + layout.size()[1])
 					.append("g")
 					.attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
 					.selectAll("text")
@@ -248,10 +264,11 @@
 						return d.text;
 					})
 					.on("mouseover", function(d, i) {
+						d3.select("#word").html(d.text);
 						d3.select("#detail")
-						.transition()
-						.duration(100)
-						.style('opacity','1');
+							.transition()
+							.duration(100)
+							.style('opacity', '1');
 						d.freqs.forEach(function(k) {
 							d3.select("#" + k.name)
 								.transition()
@@ -259,11 +276,11 @@
 								.style('width', (100 * k.freq / d.mfreq) + "px");
 						});
 					})
-					.on("mouseleave",function(d, i) {
+					.on("mouseleave", function(d, i) {
 						d3.select("#detail")
-						.transition()
-						.duration(100)
-						.style('opacity','0');
+							.transition()
+							.duration(100)
+							.style('opacity', '0');
 					});
 			}
 
