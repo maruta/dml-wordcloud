@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+
+	<title>Popular Keywords in Machine Learning and Control Theory</title>
+	<link href="https://fonts.googleapis.com/css?family=Raleway:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+	<style>
+		#detail {
+			position: absolute;
+			bottom: 0;
+			right: 0;
+			width: 200px;
+			height: 200px;
+		}
+
+		div[id^="CDC"] {
+			border: solid 1px #3F51B5;
+			background: #3F51B5;
+			width: 0px;
+			height: 5px;
+		}
+
+		div[id^="ICML"] {
+			border: solid 1px #009688;
+			background: #009688;
+			width: 0px;
+			height: 5px;
+		}
+		td,th{
+			font-size:12px;
+			line-height: 1;
+			font-family: Raleway;
+			font-weight:600;
+		}
+		th{
+			text-align: right;
+		}
+		tr.CDC td, tr.CDC th{
+			color: #3F51B5;
+			padding-top:0;
+			padding-bottom:0;
+		}
+		tr.ICML td, tr.ICML th{
+			padding-top:0;
+			padding-bottom:5px;
+			color: #009688;
+		}
+		.keyword:hover {
+			fill: #f44336 !important;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="detail">
+		<table>
+			<tbody>
+				<tr class="CDC">
+					<th>CDC 2013</th>
+					<td>
+						<div id="CDC2013"></div>
+					</td>
+				</tr>
+				<tr class="ICML">
+					<th>ICML 2013</th>
+					<td>
+						<div id="ICML2013"></div>
+					</td>
+				</tr>
+				<tr class="CDC">
+					<th>CDC 2014</th>
+					<td>
+						<div id="CDC2014"></div>
+					</td>
+				</tr>
+				<tr class="ICML">
+					<th>ICML 2014</th>
+					<td>
+						<div id="ICML2014"></div>
+					</td>
+				</tr>
+				<tr class="CDC">
+					<th>CDC 2015</th>
+					<td>
+						<div id="CDC2015"></div>
+					</td>
+				</tr>
+				<tr class="ICML">
+					<th>ICML 2015</th>
+					<td>
+						<div id="ICML2015"></div>
+					</td>
+				</tr>
+				<tr class="CDC">
+					<th>CDC 2016</th>
+					<td>
+						<div id="CDC2016"></div>
+					</td>
+				</tr>
+				<tr class="ICML">
+					<th>ICML 2016</th>
+					<td>
+						<div id="ICML2016"></div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<script src="https://d3js.org/d3.v4.min.js"></script>
+	<script src="d3-selection-multi.v1.min.js"></script>
+	<script src="d3.layout.cloud.js"></script>
+	<script>
+		d3.csv('count.csv', function(data) {
+			var h = 900;
+			var w = 1600;
+			data = data.splice(0, 300);
+
+			var random = d3.randomIrwinHall(2);
+			var getCount = function(d) {
+				return parseFloat(d.CDC2013) + parseFloat(d.CDC2014) +
+					parseFloat(d.CDC2015) + parseFloat(d.CDC2016) +
+					parseFloat(d.ICML2013) + parseFloat(d.ICML2014) +
+					parseFloat(d.ICML2015) + parseFloat(d.ICML2016);
+			};
+			var getRFreq = function(d) {
+				var ct = parseFloat(d.CDC2013) + parseFloat(d.CDC2014) +
+					parseFloat(d.CDC2015) + parseFloat(d.CDC2016),
+					ml = parseFloat(d.ICML2013) + parseFloat(d.ICML2014) +
+					parseFloat(d.ICML2015) + parseFloat(d.ICML2016);
+				return (ct - ml) / (ct + ml);
+			}
+			var countExt = d3.extent(data, getCount);
+			var sizeScale = d3.scalePow().exponent(1.2).domain(countExt).range([12, 60]);
+			var weightScale = d3.scaleQuantize().domain([-1.5, 0.5]).range(["100", "200", "300", "400", "500", "600", "700", "800", "900"]);
+			var colors = [ "#37474F","#37474F"];
+			var scaleColor = d3.scalePow().exponent(1)
+				.domain(d3.range(-1, 1, 1.0 / (colors.length)))
+				.range(colors);
+			var words = data.map(function(d) {
+				var freqs = [{
+					name: 'CDC2013',
+					freq: parseFloat(d.CDC2013)
+				}, {
+					name: 'CDC2014',
+					freq: parseFloat(d.CDC2014)
+				}, {
+					name: 'CDC2015',
+					freq: parseFloat(d.CDC2015)
+				}, {
+					name: 'CDC2016',
+					freq: parseFloat(d.CDC2016)
+				}, {
+					name: 'ICML2013',
+					freq: parseFloat(d.ICML2013)
+				}, {
+					name: 'ICML2014',
+					freq: parseFloat(d.ICML2014)
+				}, {
+					name: 'ICML2015',
+					freq: parseFloat(d.ICML2015)
+				}, {
+					name: 'ICML2016',
+					freq: parseFloat(d.ICML2016)
+				}];
+				var mfreq = d3.max(freqs, function(d) {
+					return d.freq;
+				});
+				return {
+					text: d.word,
+					count: getCount(d),
+					rfreq: getRFreq(d),
+					freqs: freqs,
+					mfreq: mfreq
+				};
+			});
+
+			var layout = d3.layout.cloud()
+				.size([w, h])
+				.words(words)
+				.padding(2)
+				.rotate(function() {
+					return Math.round(1 - random()) * 90;
+				})
+				.font("Raleway")
+				.fontSize(function(d) {
+					return sizeScale(d.count);
+				})
+				.fontWeight(function(d) {
+					return weightScale(d.rfreq);
+				})
+				.on("end", draw);
+
+			layout.start();
+
+			function draw(words) {
+				d3.select("body").append("svg")
+					.attr("id", "svg")
+					.attr("width", layout.size()[0])
+					.attr("height", layout.size()[1])
+					.append("g")
+					.attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
+					.selectAll("text")
+					.data(words)
+					.enter().append("text")
+					.classed("keyword", true)
+					.style("font-size", function(d) {
+						return sizeScale(d.count) + "px";
+					})
+					.style("font-family", "Raleway")
+					.attr("font-weight", function(d) {
+						return weightScale(d.rfreq);
+					})
+					.style("fill", function(d) {
+						return scaleColor(d.rfreq);
+					})
+					.attr("text-anchor", "middle")
+					.attr("transform", function(d) {
+						return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+					})
+					.text(function(d) {
+						return d.text;
+					})
+					.on("mouseover", function(d, i) {
+						d.freqs.forEach(function(k) {
+							d3.select("#" + k.name)
+								.transition()
+								.duration(300)
+								.style('width', (100 * k.freq / d.mfreq) + "px");
+						});
+					});
+ 			}
+
+		});
+	</script>
+</body>
+
+</html>
