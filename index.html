@@ -5,7 +5,7 @@
 	<meta charset="utf-8" />
 
 	<title>Popular Keywords in Machine Learning and Control Theory</title>
-	<link href="https://fonts.googleapis.com/css?family=Raleway:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Raleway:400,500,600" rel="stylesheet">
 	<style>
 		html {
 			width: 100%;
@@ -173,11 +173,12 @@
 				return (ct - ml) / (ct + ml);
 			}
 			var countExt = d3.extent(data, getCount);
-			var sizeScale = d3.scalePow().exponent(1.2).domain(countExt).range([12, 64]);
-			var weightScale = d3.scaleQuantize().domain([-1.5, 0.5]).range(["100", "200", "300", "400", "500", "600", "700", "800", "900"]);
-			var colors = ["#37474F", "#37474F"];
-			var scaleColor = d3.scalePow().exponent(1)
-				.domain(d3.range(-1, 1, 1.0 / (colors.length)))
+			var sizeScale = d3.scalePow().exponent(1.0).domain(countExt).range([12, 64]);
+//			var weightScale = d3.scaleQuantize().domain([-1.5, 0.5]).range(["100", "200", "300", "400", "500", "600", "700", "800", "900"]);
+			var weightScale = d3.scaleQuantize().domain([-1.5, 0.5]).range(["400", "500", "600"]);
+			var colors = ["#009688", "#37474F","#3F51B5"];
+			var scaleColor = d3.scaleLinear()
+				.domain(d3.range(-1, 1, 2.0 / (colors.length)))
 				.range(colors);
 			var words = data.map(function(d) {
 				var freqs = [{
