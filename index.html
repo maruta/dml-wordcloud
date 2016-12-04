@@ -220,7 +220,7 @@
 			function draw(words) {
 				d3.select("body").append("svg")
 					.attr("id", "svg")
-					.attr("preserveAspectRatio", "xMidYMid meet")
+					.attr("preserveAspectRatio", "xMidYMid slice")
 					.attr("viewBox", "0 0 "+layout.size()[0]+" "+layout.size()[1])
 					.append("g")
 					.attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
