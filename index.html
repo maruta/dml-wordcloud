@@ -155,7 +155,7 @@
 		d3.csv('count.csv', function(data) {
 			var h = 900;
 			var w = 1600;
-			data = data.splice(0, 500);
+			data = data.splice(0, 250);
 
 			var random = d3.randomIrwinHall(2);
 			var getCount = function(d) {
@@ -172,7 +172,7 @@
 				return (ct - ml) / (ct + ml);
 			}
 			var countExt = d3.extent(data, getCount);
-			var sizeScale = d3.scalePow().exponent(1.0).domain(countExt).range([12, 64]);
+			var sizeScale = d3.scalePow().exponent(1.2).domain(countExt).range([20, 72]);
 //			var weightScale = d3.scaleQuantize().domain([-1.5, 0.5]).range(["100", "200", "300", "400", "500", "600", "700", "800", "900"]);
 			var weightScale = d3.scaleQuantize().domain([-1.5, 0.5]).range(["300","400", "500", "600","700"]);
 			var colors = ["#009688", "#37474F","#3F51B5"];
